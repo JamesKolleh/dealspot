@@ -4,12 +4,18 @@
     "slug": "local-deals-app",
     "version": "1.0.0",
     "sdkVersion": "55.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -29,7 +35,8 @@
           "locationAlwaysAndWhenInUsePermission": "We need your location to surface nearby deals.",
           "locationWhenInUsePermission": "We need your location to surface nearby deals."
         }
-      ]
+      ],
+      "expo-barcode-scanner"
     ]
   }
 }

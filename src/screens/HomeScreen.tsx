@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { collection, onSnapshot, query, where, orderBy, Timestamp, setDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, setDoc, deleteDoc, doc, where } from 'firebase/firestore';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -21,16 +21,32 @@ const HomeScreen = () => {
   const [locationLabel, setLocationLabel] = useState('');
 
   useEffect(() => {
+    // Simplified query without complex filters that require composite indexes
     const dealsQuery = query(
       collection(db, 'deals'),
-      where('expiryDate', '>', Timestamp.now()),
-      orderBy('featured', 'desc'),
       orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(dealsQuery, (snapshot) => {
-      const dealList: Deal[] = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      const dealList: Deal[] = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...(doc.data() as any) }))
+        .filter((deal) => {
+          // Filter for non-expired deals on the client side
+          const expiryDate = typeof deal.expiryDate === 'string'
+            ? new Date(deal.expiryDate)
+            : new Date(deal.expiryDate.seconds * 1000);
+          return expiryDate > new Date();
+        })
+        .sort((a, b) => {
+          // Sort: featured first, then by creation date
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return 0;
+        });
+      console.log('🔄 Deals loaded:', dealList.length);
       setDeals(dealList);
+    }, (error) => {
+      console.error('❌ Error loading deals:', error);
     });
 
     return unsubscribe;

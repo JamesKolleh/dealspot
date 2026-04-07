@@ -60,14 +60,21 @@ const DealDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       return;
     }
 
+    // Generate a unique 6-character redemption code
+    const redemptionCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
     await setDoc(doc(db, 'redeemedCoupons', `${user.uid}_${dealId}`), {
       userId: user.uid,
       dealId,
       redeemedAt: new Date(),
+      redemptionCode,
+      createdBy: deal.createdBy,
+      dealTitle: deal.title,
+      dealDiscount: deal.discount,
     });
     await updateDoc(doc(db, 'deals', dealId), { redeemedCount: increment(1) });
     setRedeemed(true);
-    Alert.alert('Coupon redeemed', 'Show this screen to the merchant when you use the offer.');
+    Alert.alert('Coupon redeemed', `Your redemption code is: ${redemptionCode}. Show this to the merchant.`);
   };
 
   if (!deal) {

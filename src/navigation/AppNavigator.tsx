@@ -4,12 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import MainTabs from './MainTabs';
 import DealDetailsScreen from '../screens/DealDetailsScreen';
+import ScannerScreen from '../screens/ScannerScreen';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   DealDetails: { dealId: string };
+  Scanner: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,6 +33,7 @@ const AppNavigator = () => {
         <>
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="DealDetails" component={DealDetailsScreen} />
+          <Stack.Screen name="Scanner" component={ScannerScreen} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />
